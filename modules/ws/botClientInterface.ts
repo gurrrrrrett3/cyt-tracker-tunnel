@@ -1,4 +1,5 @@
 import socket from "ws";
+import { clientManager } from "../..";
 import WebsocketIntakeHandler from "./clientManager/intakeHandler";
 
 export default class BotClientInterface {
@@ -27,6 +28,10 @@ export default class BotClientInterface {
 
         if (str.startsWith("botserver:")) {
           this.handleBotMessage(str.split(":").splice(1).join(":"));
+        }
+
+        if (str.startsWith("command:")) {
+          this.handleBotCommand(str.split(":").splice(1).join(":"));
         }
 
         if (str.startsWith("client:")) {
@@ -59,5 +64,33 @@ export default class BotClientInterface {
       callback,
       timestamp: Date.now(),
     });
+  }
+
+  private handleBotCommand(str: string) {
+    const type = str.split(":")[0];
+    const data = JSON.parse(str.split(":").splice(1).join(":"));
+    console.log(`Bot command: ${type}`);
+    console.log(`Bot data: ${JSON.stringify(data)}`);
+    
+    if (type == "chat") {
+     const client = clientManager.getClient(data.username);
+      if (!client) return;
+
+      client.sendMessage(data.message);
+    } else if (type == "command") {
+      const client = clientManager.getClient(data.username);
+      if (!client) return;
+
+      client.sendCommand(data.command);
+    } else if (type == "private") {
+      const client = clientManager.getClient(data.username);
+      if (!client) return;
+
+      client.showClientSideMessage(data.message);
+    }
+  }
+
+  public sendBotMessage(type: string, data: Object) {
+    this.client?.send(`tunnel:${type}:${JSON.stringify(data)}`);
   }
 }

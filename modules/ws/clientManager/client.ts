@@ -19,13 +19,6 @@ export default class Client {
     this.ip = websocket.url;
 
     this._socket = websocket;
-
-    
-      setTimeout(() => {
-        if (this.username == "54M44R") {
-          this.sendMessage("Hello i am 54");
-        }
-      }, 3000);
   }
 
   public sendMessage(message: string) {

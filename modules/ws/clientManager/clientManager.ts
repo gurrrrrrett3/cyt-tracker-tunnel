@@ -27,12 +27,18 @@ export default class ClientManager {
     },
     ip: string
   ) {
-    
-   const client = this.clients.get(ip);
+    const client = this.clients.get(ip);
     if (!client) return;
     console.log(`Client ${client.username} received a message: ${data.data}`);
 
-    this.messageParser.addMessage(new ChatMessage("incomingChatMessage", data.data, client.username, data.timestamp));
+    this.messageParser.addMessage(
+      new ChatMessage("incomingChatMessage", data.data, client.username, data.timestamp)
+    );
+  }
 
+  public getClient(username: string) {
+    const clients: Client[] = Array.from(this.clients.values());
+    const client = clients.find((client) => client.username == username);
+    return client;
   }
 }

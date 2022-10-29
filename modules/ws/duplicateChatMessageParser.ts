@@ -1,3 +1,4 @@
+import { bci } from "../..";
 import ChatMessage from "./chatMessage";
 
 export default class DuplicateChatMessageParser {
@@ -12,7 +13,11 @@ export default class DuplicateChatMessageParser {
       this.recentMessages.shift();
     }
 
-    return this.parseNonPublicInfo(message);
+    const msg = this.parseNonPublicInfo(message);
+
+    if (msg.public) {
+      bci.sendBotMessage(`chat.${msg.channelType}`, msg);
+    }    
   }
 
   public isDuplicate(message: ChatMessage) {
