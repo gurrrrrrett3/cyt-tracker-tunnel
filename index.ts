@@ -3,6 +3,7 @@ import express from "express";
 import ws from "ws"
 import path from "path"
 import BotClientInterface from "./modules/ws/botClientInterface";
+import ClientManager from "./modules/ws/clientManager/clientManager";
 
 const app = express();
 const websocketServer = new ws.WebSocketServer({ port: config.websocketPort });
@@ -21,3 +22,5 @@ app.get("/", (req, res) => {
 app.get("/script", (req, res) => {
     res.sendFile(path.resolve("dist/bundle.js"));
 })
+
+export const clientManager = new ClientManager()

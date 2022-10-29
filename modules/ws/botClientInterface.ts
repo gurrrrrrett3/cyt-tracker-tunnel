@@ -1,4 +1,5 @@
 import socket from "ws";
+import WebsocketIntakeHandler from "./clientManager/intakeHandler";
 
 export default class BotClientInterface {
   public client?: socket;
@@ -15,6 +16,9 @@ export default class BotClientInterface {
     ws.on("connection", (client, req) => {
       client.on("message", (data) => {
         const str = data.toString();
+
+        console.log(`Message: ${str}`)
+
         if (str == "botserver:ready") {
           this.client = client;
           console.info("Bot server connected");
@@ -23,6 +27,10 @@ export default class BotClientInterface {
 
         if (str.startsWith("botserver:")) {
           this.handleBotMessage(str.split(":").splice(1).join(":"));
+        }
+
+        if (str.startsWith("client:")) {
+          WebsocketIntakeHandler.onClientMessage(client, str, req.socket.remoteAddress ?? "");
         }
       });
     });
