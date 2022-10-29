@@ -87,10 +87,22 @@ export default class DuplicateChatMessageParser {
       localChat: /^local .*$/g,
       partyChat: / /g, // TODO: Add regex for party chat
 
-      // public messages
+      // public messages   
       globalMessages:
         /(?<prefix1>\[.*\])(?<prefix2>\[.*\])? (?<author>[A-Za-z0-9_§]{3,24}) » (?<message>.*)$/g,
+
+      // shit to ignore "
+      systemMessageTriggers: /[▎]|(^ {.5})/gi
     };
+
+    // ignore system messages
+    if (message.content.match(regex.systemMessageTriggers)) {
+      returnInfo.public = false;
+      returnInfo.channelType = "System Message";
+      returnInfo.author = "System";
+
+      return returnInfo;
+    }
 
     // Private Messages
 
